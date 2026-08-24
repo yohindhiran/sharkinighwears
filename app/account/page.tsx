@@ -1,0 +1,3 @@
+import Link from "next/link";
+
+export default function AccountPage() { return <div className="mx-auto max-w-md px-6 py-20 text-center"><p className="eyebrow text-rose">Your SHARKI account</p><h1 className="display mt-4 text-6xl">Welcome in.</h1><p className="mt-5 text-sm leading-7 text-ink/60">Sign in to view your orders, saved pieces and delivery details.</p><div className="mt-8 grid gap-3"><Link href="/login" className="bg-ink py-4 text-xs font-bold uppercase tracking-[.16em] text-white">Sign in</Link><Link href="/register" className="border border-ink/20 py-4 text-xs font-bold uppercase tracking-[.16em]">Create account</Link></div></div>; }

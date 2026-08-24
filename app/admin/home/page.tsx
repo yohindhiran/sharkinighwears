@@ -1,0 +1,1 @@
+export default function AdminHomePage() { return <><p className="eyebrow text-rose">Content</p><h1 className="display mt-2 text-6xl">Home page</h1><div className="mt-10 bg-white p-8 text-sm leading-7 text-ink/60">Homepage content management is reserved for the shared content model foundation. Existing public homepage content remains unchanged.</div></>; }
