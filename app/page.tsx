@@ -21,13 +21,12 @@ const whyItems = [
 ];
 
 export default async function HomePage() {
-  let products = [];
-  let categories = [];
-  let promotions = [];
-  let reviews = [];
-  let homepage = defaultHomepageContent;
-  let footerContent = { newsletterText: "New drops, thoughtful stories and a softer way to start the day." };
-  let error = false;
+  let products: Awaited<ReturnType<typeof getStorefrontProducts>> = [];
+  let categories: Awaited<ReturnType<typeof getStorefrontCategories>> = [];
+  let promotions: Awaited<ReturnType<typeof getStorefrontPromotions>> = [];
+  let reviews: Awaited<ReturnType<typeof getStorefrontReviews>> = [];
+  let homepage: HomepageContent = defaultHomepageContent;
+  let footerContent: { newsletterText?: string } = { newsletterText: "New drops, thoughtful stories and a softer way to start the day." };
 
   try {
     const results = await Promise.all([
@@ -42,7 +41,6 @@ export default async function HomePage() {
     [products, categories, promotions, reviews, homepage, footerContent] = results;
   } catch (e) {
     console.warn("Error loading homepage data:", e);
-    error = true;
   }
 
   const arrivals = products.slice(0, 8);
@@ -96,7 +94,7 @@ export default async function HomePage() {
         </section>
       )}
 
-      {arrivals.length === 0 && !error && (
+      {arrivals.length === 0 && (
         <section className="mx-auto max-w-[1320px] px-5 py-20 md:px-10 md:py-28 text-center">
           <p className="text-ink/50">No products available yet. Check back soon!</p>
         </section>
