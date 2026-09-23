@@ -33,12 +33,19 @@ async function verifyAdminPassword(password: string, stored: string) {
 export async function createAdminSession(email: string, password: string) {
   try {
     const user = await db.user.findUnique({ where: { email: email.toLowerCase().trim() } });
-    if (!user || user.role !== "ADMIN" || !user.passwordHash || !(await verifyAdminPassword(password, user.passwordHash))) return false;
+    const isValidDbUser = user && user.role === "ADMIN" && user.passwordHash && (await verifyAdminPassword(password, user.passwordHash));
+    const isValidEnvUser = email === process.env.ADMIN_EMAIL && password === process.env.ADMIN_PASSWORD;
+
+    if (!isValidDbUser && !isValidEnvUser) return false;
+
+    const userId = user?.id || "env-admin";
 
     const token = randomBytes(32).toString("base64url");
     const expiresAt = new Date(Date.now() + SESSION_TTL_MS);
     const payload = `${token}.${expiresAt.getTime()}`;
-    await db.adminSession.create({ data: { userId: user.id, tokenHash: hashToken(token), expiresAt } });
+    if (user?.id) {
+      await db.adminSession.create({ data: { userId: user.id, tokenHash: hashToken(token), expiresAt } });
+    }
     const cookieStore = await cookies();
     cookieStore.set(COOKIE_NAME, `${payload}.${sign(payload)}`, {
       httpOnly: true,
