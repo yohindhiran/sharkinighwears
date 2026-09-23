@@ -21,19 +21,42 @@ const whyItems = [
 ];
 
 export default async function HomePage() {
-  const [products, categories, promotions, reviews, homepage, footerContent] = await Promise.all([
-    getStorefrontProducts(),
-    getStorefrontCategories(),
-    getStorefrontPromotions(),
-    getStorefrontReviews(8),
-    getSiteContent<HomepageContent>("homepage", defaultHomepageContent),
-    getSiteContent<{ newsletterText?: string }>("footer", {}),
-  ]);
+  let products: Awaited<ReturnType<typeof getStorefrontProducts>> = [];
+  let categories: Awaited<ReturnType<typeof getStorefrontCategories>> = [];
+  let promotions: Awaited<ReturnType<typeof getStorefrontPromotions>> = [];
+  let reviews: Awaited<ReturnType<typeof getStorefrontReviews>> = [];
+  let homepage: HomepageContent = defaultHomepageContent;
+  let footerContent: { newsletterText?: string } = { newsletterText: "New drops, thoughtful stories and a softer way to start the day." };
+
+  try {
+    const results = await Promise.all([
+      getStorefrontProducts().catch(() => []),
+      getStorefrontCategories().catch(() => []),
+      getStorefrontPromotions().catch(() => []),
+      getStorefrontReviews(8).catch(() => []),
+      getSiteContent<HomepageContent>("homepage", defaultHomepageContent).catch(() => defaultHomepageContent),
+      getSiteContent<{ newsletterText?: string }>("footer", {}).catch(() => ({})),
+    ]);
+
+    [products, categories, promotions, reviews, homepage, footerContent] = results;
+  } catch (e) {
+    console.warn("Error loading homepage data:", e);
+  }
+
   const arrivals = products.slice(0, 8);
 
   return (
     <>
-      {homepage.active !== false && <HeroCarousel images={homepage.heroImages} interval={homepage.heroInterval} heading={homepage.heading} description={homepage.description} buttonText={homepage.buttonText} buttonLink={homepage.buttonLink} />}
+      {homepage.active !== false && (
+        <HeroCarousel 
+          images={homepage.heroImages} 
+          interval={homepage.heroInterval} 
+          heading={homepage.heading} 
+          description={homepage.description} 
+          buttonText={homepage.buttonText}
+          buttonLink={homepage.buttonLink}
+        />
+      )}
 
       <BenefitsBar />
 
@@ -71,17 +94,23 @@ export default async function HomePage() {
         </section>
       )}
 
+      {arrivals.length === 0 && (
+        <section className="mx-auto max-w-[1320px] px-5 py-20 md:px-10 md:py-28 text-center">
+          <p className="text-ink/50">No products available yet. Check back soon!</p>
+        </section>
+      )}
+
       <PromoBanner promotions={promotions} />
 
       <section className="bg-sand">
         <div className="mx-auto grid max-w-[1320px] items-center gap-12 px-5 py-20 md:grid-cols-2 md:px-10 md:py-28">
           <div className="relative aspect-[4/5] overflow-hidden">
-            <Image src="https://images.unsplash.com/photo-1571513722275-4b41940f54b8?auto=format&fit=crop&w=1000&q=85" alt="Textile and garment craftsmanship" fill className="object-cover" sizes="(max-width: 768px) 100vw, 50vw" />
+            <Image src="https://images.unsplash.com/photo-1571513722275-4b41940f54b8?auto=format&fit=crop&w=1000&q=85" alt="Textile and garment craftsmanship" fill className="object-cover" sizes="(max-width: 640px) 100vw, 50vw" />
           </div>
           <div className="max-w-md">
             <p className="eyebrow text-gold">From our house to yours</p>
             <h2 className="display mt-4 text-5xl leading-[.98] md:text-6xl">Made by us.<br />Crafted for you.</h2>
-            <p className="mt-7 text-sm leading-7 text-ink/65">Every SHARKI piece begins with a considered fabric and ends with a careful quality check. Our own manufacturing house lets us stay close to every detail, so comfort never has to be compromised.</p>
+            <p className="mt-7 text-sm leading-7 text-ink/65">Every SHARKI piece begins with a considered fabric and ends with a careful quality check. Our own manufacturing house lets us stay close to every detail.</p>
             <Link href="/our-making" className="link-underline mt-9">Our making story <ArrowUpRight size={14} /></Link>
           </div>
         </div>
