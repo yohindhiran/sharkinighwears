@@ -6,7 +6,6 @@ import { PageIntro } from "@/components/storefront/page-intro";
 export default async function ShopPage({ searchParams }: { searchParams: Promise<{ category?: string; collection?: string }> }) {
   let products: Awaited<ReturnType<typeof getStorefrontProducts>> = [];
   let categories: Awaited<ReturnType<typeof getStorefrontCategories>> = [];
-  let error = false;
 
   try {
     const params = await searchParams;
@@ -19,7 +18,6 @@ export default async function ShopPage({ searchParams }: { searchParams: Promise
     categories = categoriesData;
   } catch (e) {
     console.warn("Error loading shop page:", e);
-    error = true;
   }
 
   return (

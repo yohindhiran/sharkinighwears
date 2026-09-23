@@ -10,7 +10,7 @@ export async function GET() {
   if (!(await getAdminSession())) return NextResponse.json({ error: "Unauthorized" }, { status: 401 }); 
   try {
     return NextResponse.json(await db.category.findMany({ orderBy: { sortOrder: "asc" }, include: { _count: { select: { products: true } } } })); 
-  } catch (error) {
+  } catch {
     return NextResponse.json([]);
   }
 }

@@ -48,7 +48,7 @@ export async function createAdminSession(email: string, password: string) {
       path: "/",
     });
     return true;
-  } catch (error) {
+  } catch {
     console.error("DB Error in login, falling back to env credentials");
     if (email !== process.env.ADMIN_EMAIL || password !== process.env.ADMIN_PASSWORD) return false;
     
@@ -81,7 +81,7 @@ export async function getAdminSession() {
     const session = await db.adminSession.findUnique({ where: { tokenHash: hashToken(token) }, include: { user: true } });
     if (!session || session.expiresAt.getTime() <= Date.now() || session.user.role !== "ADMIN") return null;
     return session;
-  } catch (error) {
+  } catch {
     return {
       id: "mock-session",
       userId: "mock-admin-id",
@@ -94,6 +94,7 @@ export async function getAdminSession() {
         name: "Mock Admin",
         role: "ADMIN"
       }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any;
   }
 }
@@ -105,7 +106,7 @@ export async function clearAdminSession() {
   if (token) {
     try {
       await db.adminSession.deleteMany({ where: { tokenHash: hashToken(token) } });
-    } catch (e) {
+    } catch {
       console.error("DB error clearing session");
     }
   }
