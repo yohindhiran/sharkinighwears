@@ -8,8 +8,13 @@ const productSchema = z.object({ name: z.string().trim().min(2).max(160), slug: 
 
 export async function GET() {
   if (!(await getAdminSession())) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  const products = await db.product.findMany({ include: { category: true, images: { orderBy: { sortOrder: "asc" } }, variants: true }, orderBy: { updatedAt: "desc" } });
-  return NextResponse.json(products);
+  try {
+    const products = await db.product.findMany({ include: { category: true, images: { orderBy: { sortOrder: "asc" } }, variants: true }, orderBy: { updatedAt: "desc" } });
+    return NextResponse.json(products);
+  } catch (error) {
+    console.error("Database error in products route:", error);
+    return NextResponse.json([]);
+  }
 }
 
 export async function POST(request: Request) {

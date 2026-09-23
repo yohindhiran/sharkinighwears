@@ -7,38 +7,68 @@ function toProduct(product: { slug: string; name: string; description: string; p
 }
 
 export async function getStorefrontProducts(category?: string, collectionSlug?: string) {
-  const records = await db.product.findMany({ where: { status: "ACTIVE", ...(category ? { category: { slug: category } } : {}), ...(collectionSlug ? { collections: { some: { collection: { slug: collectionSlug, active: true } } } } : {}) }, include: { category: true, images: { orderBy: { sortOrder: "asc" } }, variants: { where: { active: true } } }, orderBy: { createdAt: "desc" } });
-  return records.map(toProduct);
+  try {
+    const records = await db.product.findMany({ where: { status: "ACTIVE", ...(category ? { category: { slug: category } } : {}), ...(collectionSlug ? { collections: { some: { collection: { slug: collectionSlug, active: true } } } } : {}) }, include: { category: true, images: { orderBy: { sortOrder: "asc" } }, variants: { where: { active: true } } }, orderBy: { createdAt: "desc" } });
+    return records.map(toProduct);
+  } catch (error) {
+    console.error("Database error in getStorefrontProducts:", error);
+    return [];
+  }
 }
 
 export async function getStorefrontProduct(slug: string) {
-  const record = await db.product.findFirst({ where: { slug, status: "ACTIVE" }, include: { category: true, images: { orderBy: { sortOrder: "asc" } }, variants: { where: { active: true } }, reviews: { where: { approved: true }, include: { user: { select: { name: true } } }, orderBy: { createdAt: "desc" } } } });
-  return record ? toProduct(record) : undefined;
+  try {
+    const record = await db.product.findFirst({ where: { slug, status: "ACTIVE" }, include: { category: true, images: { orderBy: { sortOrder: "asc" } }, variants: { where: { active: true } }, reviews: { where: { approved: true }, include: { user: { select: { name: true } } }, orderBy: { createdAt: "desc" } } } });
+    return record ? toProduct(record) : undefined;
+  } catch (error) {
+    console.error("Database error in getStorefrontProduct:", error);
+    return undefined;
+  }
 }
 
 export async function getStorefrontCategories() {
-  return db.category.findMany({ where: { active: true }, orderBy: { sortOrder: "asc" } });
+  try {
+    return await db.category.findMany({ where: { active: true }, orderBy: { sortOrder: "asc" } });
+  } catch (error) {
+    console.error("Database error in getStorefrontCategories:", error);
+    return [];
+  }
 }
 
 export async function getStorefrontCollections() {
-  return db.collection.findMany({ where: { active: true }, orderBy: { sortOrder: "asc" } });
+  try {
+    return await db.collection.findMany({ where: { active: true }, orderBy: { sortOrder: "asc" } });
+  } catch (error) {
+    console.error("Database error in getStorefrontCollections:", error);
+    return [];
+  }
 }
 
 export async function getStorefrontPromotions() {
-  const record = await db.siteContent.findUnique({ where: { key: "promotions" } });
-  const data = record?.data as { promotions?: unknown } | null;
-  return data && Array.isArray(data.promotions)
-    ? data.promotions.filter((promotion): promotion is Record<string, unknown> => Boolean(promotion) && typeof promotion === "object" && (promotion as Record<string, unknown>).enabled !== false && (promotion as Record<string, unknown>).active !== false)
-    : [];
+  try {
+    const record = await db.siteContent.findUnique({ where: { key: "promotions" } });
+    const data = record?.data as { promotions?: unknown } | null;
+    return data && Array.isArray(data.promotions)
+      ? data.promotions.filter((promotion): promotion is Record<string, unknown> => Boolean(promotion) && typeof promotion === "object" && (promotion as Record<string, unknown>).enabled !== false && (promotion as Record<string, unknown>).active !== false)
+      : [];
+  } catch (error) {
+    console.error("Database error in getStorefrontPromotions:", error);
+    return [];
+  }
 }
 
 export async function getStorefrontReviews(limit = 8) {
-  const records = await db.review.findMany({
-    where: { approved: true },
-    include: { user: { select: { name: true } }, product: { select: { name: true, slug: true } } },
-    orderBy: { createdAt: "desc" },
-    take: limit,
-  });
-  const reviews: StorefrontReview[] = records.map((review) => ({ id: review.id, rating: review.rating, title: review.title, body: review.body, createdAt: review.createdAt.toISOString(), userName: review.user.name, productName: review.product.name, productSlug: review.product.slug }));
-  return reviews;
+  try {
+    const records = await db.review.findMany({
+      where: { approved: true },
+      include: { user: { select: { name: true } }, product: { select: { name: true, slug: true } } },
+      orderBy: { createdAt: "desc" },
+      take: limit,
+    });
+    const reviews: StorefrontReview[] = records.map((review) => ({ id: review.id, rating: review.rating, title: review.title, body: review.body, createdAt: review.createdAt.toISOString(), userName: review.user.name, productName: review.product.name, productSlug: review.product.slug }));
+    return reviews;
+  } catch (error) {
+    console.error("Database error in getStorefrontReviews:", error);
+    return [];
+  }
 }

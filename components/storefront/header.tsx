@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { Heart, Menu, Search, ShoppingBag, UserRound, X } from "lucide-react";
 import { useState } from "react";
 import { useCart, useWishlist } from "@/components/storefront/providers";
@@ -37,8 +38,7 @@ export function Header({ config = {} }: { config?: HeaderConfig }) {
           {open ? <X size={21} strokeWidth={1.5} /> : <Menu size={21} strokeWidth={1.5} />}
         </button>
         <Link href="/" aria-label="SHARKI NIGHTWEARS home" className="shrink-0 leading-none">
-          <span className="display text-[26px] font-semibold tracking-[.12em] md:text-[30px]">{config.brandName ?? "SHARKI"}</span>
-          <span className="mt-0.5 block text-[8px] font-bold uppercase tracking-[.42em] text-gold">{config.brandSubtitle ?? "NIGHTWEARS"}</span>
+          <Image src="/logo.png" alt={config.brandName ?? "SHARKI NIGHTWEARS"} width={180} height={70} className="h-10 w-auto object-contain md:h-12" priority />
         </Link>
         <nav className="hidden items-center gap-8 lg:flex" aria-label="Primary">
           {navigation.map((item) => (
