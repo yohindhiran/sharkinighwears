@@ -4,12 +4,13 @@ import { ProductCard } from "@/components/storefront/product-card";
 import { PageIntro } from "@/components/storefront/page-intro";
 
 export default async function ShopPage({ searchParams }: { searchParams: Promise<{ category?: string; collection?: string }> }) {
+  const params = await searchParams;
+  const { category, collection } = params;
+
   let products: Awaited<ReturnType<typeof getStorefrontProducts>> = [];
   let categories: Awaited<ReturnType<typeof getStorefrontCategories>> = [];
 
   try {
-    const params = await searchParams;
-    const { category, collection } = params;
     const [productsData, categoriesData] = await Promise.all([
       getStorefrontProducts(category, collection).catch(() => []),
       getStorefrontCategories().catch(() => []),

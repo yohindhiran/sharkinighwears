@@ -38,7 +38,7 @@ export async function createAdminSession(email: string, password: string) {
 
     if (!isValidDbUser && !isValidEnvUser) return false;
 
-    const userId = user?.id || "env-admin";
+    // userId is not needed
 
     const token = randomBytes(32).toString("base64url");
     const expiresAt = new Date(Date.now() + SESSION_TTL_MS);
