@@ -109,7 +109,6 @@ export async function getAdminSession() {
       }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any;
-  }
 }
 
 export async function clearAdminSession() {
