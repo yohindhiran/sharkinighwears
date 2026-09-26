@@ -5,6 +5,9 @@ import { getAdminSession } from "@/lib/admin-auth";
 import { revalidateStorefront } from "@/lib/revalidate-storefront";
 import { revalidatePath } from "next/cache";
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 const categorySchema = z.object({ name: z.string().trim().min(2).max(120), slug: z.string().trim().min(2).max(120).regex(/^[a-z0-9-]+$/), description: z.string().trim().max(1000).optional(), imageUrl: z.string().url().optional().or(z.literal("")), active: z.boolean().default(true), sortOrder: z.coerce.number().int().default(0) });
 
 export async function GET() { 

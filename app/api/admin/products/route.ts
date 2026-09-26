@@ -4,6 +4,9 @@ import { db } from "@/lib/db";
 import { getAdminSession } from "@/lib/admin-auth";
 import { revalidateStorefront } from "@/lib/revalidate-storefront";
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 const productSchema = z.object({ name: z.string().trim().min(2).max(160), slug: z.string().trim().min(2).max(160).regex(/^[a-z0-9-]+$/), sku: z.string().trim().min(2).max(80), description: z.string().trim().min(2).max(3000), price: z.coerce.number().int().nonnegative(), salePrice: z.coerce.number().int().nonnegative().nullable().optional(), categoryId: z.string().min(1), image: z.string().url().optional().or(z.literal("")), sizes: z.array(z.string().trim().min(1)).default([]), colors: z.array(z.string().trim().min(1)).default([]), stock: z.coerce.number().int().nonnegative().default(0), status: z.enum(["DRAFT", "ACTIVE", "ARCHIVED"]).default("ACTIVE"), featured: z.boolean().default(false) });
 
 export async function GET() {
