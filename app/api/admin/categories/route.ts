@@ -10,8 +10,9 @@ export async function GET() {
   if (!(await getAdminSession())) return NextResponse.json({ error: "Unauthorized" }, { status: 401 }); 
   try {
     return NextResponse.json(await db.category.findMany({ orderBy: { sortOrder: "asc" }, include: { _count: { select: { products: true } } } })); 
-  } catch {
-    return NextResponse.json([]);
+  } catch (error) {
+    console.error("Failed to fetch categories from DB:", error);
+    return NextResponse.json({ error: "Database connection failed." }, { status: 500 });
   }
 }
 export async function POST(request: Request) {
@@ -23,8 +24,8 @@ export async function POST(request: Request) {
       revalidateStorefront();
       return NextResponse.json(category, { status: 201 });
     } catch (dbError) {
-      console.warn("Database error, mocking category creation", dbError);
-      return NextResponse.json({ id: "mock-" + Date.now(), ...input, imageUrl: input.imageUrl || null }, { status: 201 });
+      console.error("Database error creating category:", dbError);
+      return NextResponse.json({ error: "Database error while saving category." }, { status: 500 });
     }
   } catch (error) {
     if (error instanceof z.ZodError) return NextResponse.json({ error: "Please check the category fields." }, { status: 400 });
