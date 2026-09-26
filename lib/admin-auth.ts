@@ -32,9 +32,13 @@ async function verifyAdminPassword(password: string, stored: string) {
 
 export async function createAdminSession(email: string, password: string) {
   try {
-    const user = await db.user.findUnique({ where: { email: email.toLowerCase().trim() } });
+    const normalizedEmail = email.toLowerCase().trim();
+    const envEmail = process.env.ADMIN_EMAIL?.toLowerCase().trim();
+    const envPassword = process.env.ADMIN_PASSWORD?.trim();
+    
+    const user = await db.user.findUnique({ where: { email: normalizedEmail } });
     const isValidDbUser = user && user.role === "ADMIN" && user.passwordHash && (await verifyAdminPassword(password, user.passwordHash));
-    const isValidEnvUser = email === process.env.ADMIN_EMAIL && password === process.env.ADMIN_PASSWORD;
+    const isValidEnvUser = envEmail && normalizedEmail === envEmail && password === envPassword;
 
     if (!isValidDbUser && !isValidEnvUser) return false;
 
@@ -57,7 +61,11 @@ export async function createAdminSession(email: string, password: string) {
     return true;
   } catch {
     console.error("DB Error in login, falling back to env credentials");
-    if (email !== process.env.ADMIN_EMAIL || password !== process.env.ADMIN_PASSWORD) return false;
+    const normalizedEmail = email.toLowerCase().trim();
+    const envEmail = process.env.ADMIN_EMAIL?.toLowerCase().trim();
+    const envPassword = process.env.ADMIN_PASSWORD?.trim();
+    
+    if (normalizedEmail !== envEmail || password !== envPassword) return false;
     
     const token = randomBytes(32).toString("base64url");
     const expiresAt = new Date(Date.now() + SESSION_TTL_MS);

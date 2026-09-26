@@ -28,11 +28,7 @@ export function Header({ config = {} }: { config?: HeaderConfig }) {
 
   return (
     <header className="sticky top-0 z-40 border-b border-ink/10 bg-cream/95 backdrop-blur">
-      {showAnnouncement && (
-        <div className="bg-ink px-4 py-2.5 text-center">
-          <p className="text-[10px] font-bold uppercase tracking-[.22em] text-white/85">{announcement}</p>
-        </div>
-      )}
+      {/* Announcement banner removed as requested */}
       <div className="mx-auto flex h-[72px] max-w-[1320px] items-center justify-between gap-6 px-5 md:h-[84px] md:px-10">
         <button className="flex h-10 w-10 items-center justify-start lg:hidden" onClick={() => setOpen(!open)} aria-label={open ? "Close menu" : "Open menu"} aria-expanded={open}>
           {open ? <X size={21} strokeWidth={1.5} /> : <Menu size={21} strokeWidth={1.5} />}
