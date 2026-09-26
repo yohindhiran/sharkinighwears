@@ -15,9 +15,9 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
     revalidateStorefront(); 
     revalidatePath('/admin/categories');
     return NextResponse.json(category); 
-  } catch (error: any) { 
+  } catch (error) { 
     if (error instanceof z.ZodError) return NextResponse.json({ error: "Please check the category fields." }, { status: 400 }); 
-    return NextResponse.json({ error: error?.message || "Unable to update category." }, { status: 500 }); 
+    return NextResponse.json({ error: error instanceof Error ? error.message : "Unable to update category." }, { status: 500 }); 
   } 
 }
 
@@ -30,7 +30,7 @@ export async function DELETE(_request: Request, { params }: { params: Promise<{ 
     revalidateStorefront(); 
     revalidatePath('/admin/categories');
     return NextResponse.json({ ok: true });
-  } catch (error: any) {
-    return NextResponse.json({ error: error?.message || "Unable to delete category." }, { status: 500 }); 
+  } catch (error) {
+    return NextResponse.json({ error: error instanceof Error ? error.message : "Unable to delete category." }, { status: 500 }); 
   }
 }

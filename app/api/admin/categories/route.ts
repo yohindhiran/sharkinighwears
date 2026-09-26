@@ -11,9 +11,9 @@ export async function GET() {
   if (!(await getAdminSession())) return NextResponse.json({ error: "Unauthorized" }, { status: 401 }); 
   try {
     return NextResponse.json(await db.category.findMany({ orderBy: { sortOrder: "asc" }, include: { _count: { select: { products: true } } } })); 
-  } catch (error: any) {
+  } catch (error) {
     console.error("Failed to fetch categories from DB:", error);
-    return NextResponse.json({ error: error?.message || "Database connection failed." }, { status: 500 });
+    return NextResponse.json({ error: error instanceof Error ? error.message : "Database connection failed." }, { status: 500 });
   }
 }
 export async function POST(request: Request) {
@@ -25,12 +25,12 @@ export async function POST(request: Request) {
       revalidateStorefront();
       revalidatePath('/admin/categories');
       return NextResponse.json(category, { status: 201 });
-    } catch (dbError: any) {
+    } catch (dbError) {
       console.error("Database error creating category:", dbError);
-      return NextResponse.json({ error: dbError?.message || "Database error while saving category." }, { status: 500 });
+      return NextResponse.json({ error: dbError instanceof Error ? dbError.message : "Database error while saving category." }, { status: 500 });
     }
-  } catch (error: any) {
+  } catch (error) {
     if (error instanceof z.ZodError) return NextResponse.json({ error: "Please check the category fields." }, { status: 400 });
-    return NextResponse.json({ error: error?.message || "Unable to create category." }, { status: 500 });
+    return NextResponse.json({ error: error instanceof Error ? error.message : "Unable to create category." }, { status: 500 });
   }
 }
