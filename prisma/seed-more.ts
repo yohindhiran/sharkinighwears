@@ -43,8 +43,9 @@ async function main() {
     // Generate 12 products per category
     for (let i = 1; i <= 12; i++) {
       const productName = `${catData.name.replace(/s$/, "")} ${i} - ${getRandomItem(["Floral", "Solid", "Striped", "Classic", "Lace Trim", "Comfort"])}`;
-      const slug = toKebabCase(`${productName}-${getRandomInt(1000, 9999)}`);
-      const sku = `SHR-${catData.slug.substring(0, 3).toUpperCase()}-${getRandomInt(1000, 9999)}`;
+      const uuidSuffix = require('crypto').randomUUID().split('-')[0];
+      const slug = toKebabCase(`${productName}-${uuidSuffix}`);
+      const sku = `SHR-${catData.slug.substring(0, 3).toUpperCase()}-${uuidSuffix}`;
       const price = getRandomInt(12, 45) * 100 - 1; // e.g., 1199, 1499, 4499
       const salePrice = Math.random() > 0.5 ? price - (getRandomInt(1, 5) * 100) : price;
 

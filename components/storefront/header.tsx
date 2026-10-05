@@ -23,8 +23,6 @@ export function Header({ config = {} }: { config?: HeaderConfig }) {
   const wishlist = useWishlist();
 
   const navigation = (config.navigation?.length ? config.navigation : defaultNavigation).filter((item) => item.enabled);
-  const showAnnouncement = config.announcementVisible !== false;
-  const announcement = config.announcementText || "Free Shipping on Orders Over ₹1000";
 
   return (
     <header className="sticky top-0 z-40 border-b border-ink/10 bg-cream/95 backdrop-blur">

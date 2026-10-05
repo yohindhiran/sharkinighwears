@@ -5,7 +5,6 @@ import { getStorefrontProducts, getStorefrontCategories, getStorefrontPromotions
 import { ProductCard } from "@/components/storefront/product-card";
 import { HeroCarousel } from "@/components/storefront/hero-carousel";
 import { BenefitsBar } from "@/components/storefront/benefits-bar";
-import { PromoBanner } from "@/components/storefront/promo-banner";
 import { ReviewsCarousel } from "@/components/storefront/reviews-carousel";
 import { NewsletterForm } from "@/components/storefront/newsletter-form";
 import { defaultHomepageContent, getSiteContent, type HomepageContent } from "@/lib/site-content";
@@ -24,7 +23,6 @@ const whyItems = [
 export default async function HomePage() {
   let products: Awaited<ReturnType<typeof getStorefrontProducts>> = [];
   let categories: Awaited<ReturnType<typeof getStorefrontCategories>> = [];
-  let promotions: Awaited<ReturnType<typeof getStorefrontPromotions>> = [];
   let reviews: Awaited<ReturnType<typeof getStorefrontReviews>> = [];
   let homepage: HomepageContent = defaultHomepageContent;
   let footerContent: { newsletterText?: string } = { newsletterText: "New drops, thoughtful stories and a softer way to start the day." };
@@ -33,13 +31,18 @@ export default async function HomePage() {
     const results = await Promise.all([
       getStorefrontProducts().catch(() => []),
       getStorefrontCategories().catch(() => []),
-      getStorefrontPromotions().catch(() => []),
       getStorefrontReviews(8).catch(() => []),
       getSiteContent<HomepageContent>("homepage", defaultHomepageContent).catch(() => defaultHomepageContent),
       getSiteContent<{ newsletterText?: string }>("footer", {}).catch(() => ({})),
     ]);
 
-    [products, categories, promotions, reviews, homepage, footerContent] = results;
+    [products, categories, reviews, homepage, footerContent] = results as [
+      typeof products,
+      typeof categories,
+      typeof reviews,
+      typeof homepage,
+      typeof footerContent
+    ];
   } catch (e) {
     console.warn("Error loading homepage data:", e);
   }
