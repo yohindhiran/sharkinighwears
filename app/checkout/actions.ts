@@ -64,9 +64,18 @@ export async function submitOrder(formData: FormData) {
 
   // Deduct stock for purchased items
   for (const item of cart.items) {
-    if (item.variantId) {
+    let targetVariantId = item.variantId;
+    
+    if (!targetVariantId) {
+      const defaultVariant = await db.productVariant.findFirst({
+        where: { productId: item.productId }
+      });
+      if (defaultVariant) targetVariantId = defaultVariant.id;
+    }
+
+    if (targetVariantId) {
       await db.productVariant.update({
-        where: { id: item.variantId },
+        where: { id: targetVariantId },
         data: { stock: { decrement: item.quantity } }
       }).catch(e => console.error("Failed to update stock:", e));
     }
