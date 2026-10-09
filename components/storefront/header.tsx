@@ -32,26 +32,29 @@ export function Header({ config = {} }: { config?: HeaderConfig }) {
           {open ? <X size={21} strokeWidth={1.5} /> : <Menu size={21} strokeWidth={1.5} />}
         </button>
         <Link href="/" aria-label="SHARKI NIGHTWEARS home" className="shrink-0 leading-none">
-          <Image src="/logo.png" alt={config.brandName ?? "SHARKI NIGHTWEARS"} width={180} height={70} className="h-10 w-auto object-contain md:h-12" priority />
+          <span className="font-display text-xl tracking-[0.25em] font-medium text-ink uppercase">SHARKI</span>
         </Link>
         <nav className="hidden items-center gap-8 lg:flex" aria-label="Primary">
           {navigation.map((item) => (
             <Link key={item.href} href={item.href} className="nav-link">{item.label}</Link>
           ))}
         </nav>
-        <div className="flex items-center gap-1 sm:gap-2">
+        <div className="flex items-center gap-2 sm:gap-4">
           {config.searchVisible !== false && (
-            <Link href="/search" aria-label="Search" className="flex h-10 w-10 items-center justify-center transition hover:text-gold"><Search size={19} strokeWidth={1.5} /></Link>
+            <div className="hidden lg:flex items-center relative">
+              <Search className="absolute left-3 text-gray-400" size={16} />
+              <input type="text" placeholder="Search products..." className="pl-9 pr-4 py-2 border border-gray-200 bg-white/50 focus:bg-white text-sm outline-none w-56 rounded-sm transition-all" />
+            </div>
           )}
           {config.profileVisible !== false && (
-            <Link href="/account" aria-label="Account" className="hidden h-10 w-10 items-center justify-center transition hover:text-gold sm:flex"><UserRound size={19} strokeWidth={1.5} /></Link>
+            <Link href="/account" aria-label="Account" className="hidden h-10 w-8 items-center justify-center transition hover:text-gold sm:flex"><UserRound size={19} strokeWidth={1.5} /></Link>
           )}
-          <Link href="/wishlist" aria-label="Wishlist" className="relative flex h-10 w-10 items-center justify-center transition hover:text-gold">
+          <Link href="/wishlist" aria-label="Wishlist" className="relative flex h-10 w-8 items-center justify-center transition hover:text-gold">
             <Heart size={19} strokeWidth={1.5} />
             {wishlist.items.length > 0 && <Badge value={wishlist.items.length} />}
           </Link>
           {config.cartVisible !== false && (
-            <Link href="/cart" aria-label="Shopping bag" className="relative flex h-10 w-10 items-center justify-center transition hover:text-gold">
+            <Link href="/cart" aria-label="Shopping bag" className="relative flex h-10 w-8 items-center justify-center transition hover:text-gold">
               <ShoppingBag size={19} strokeWidth={1.5} />
               {cart.count > 0 && <Badge value={cart.count} />}
             </Link>

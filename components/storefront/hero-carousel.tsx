@@ -48,18 +48,16 @@ export function HeroCarousel({ images = defaultSlides.map((slide) => slide.src),
           sizes="100vw"
         />
       ))}
-      <div className="absolute inset-0 bg-gradient-to-r from-black/55 via-black/25 to-transparent" />
-      <div className="absolute inset-0 flex items-center">
+      <div className="absolute inset-0 bg-black/10" />
+      <div className="absolute inset-0 flex items-center justify-center text-center">
         <div className="mx-auto w-full max-w-[1320px] px-6 md:px-10">
-          <div className="max-w-xl text-white">
-            <p className="eyebrow text-white/80">New Collection</p>
-            <h1 className="display mt-5 text-5xl leading-[1.02] md:text-7xl lg:text-[84px]">{headline}</h1>
-            <p className="mt-6 max-w-md text-sm leading-7 text-white/85 md:text-base">{copy}</p>
-            <div className="mt-9 flex flex-wrap items-center gap-4">
-              <Link href={ctaHref} className="btn-primary !bg-white !text-ink hover:!bg-gold hover:!text-white">
-                {ctaLabel} <ArrowRight size={14} />
+          <div className="mx-auto max-w-2xl text-white drop-shadow-md">
+            <h1 className="display text-5xl md:text-7xl lg:text-[90px] font-normal tracking-wide drop-shadow-lg">{headline}</h1>
+            <p className="mt-4 text-base leading-7 text-white/95 md:text-lg tracking-wide drop-shadow">{copy}</p>
+            <div className="mt-10 flex items-center justify-center">
+              <Link href={ctaHref} className="btn-primary !bg-[#382b22] !text-white hover:!bg-ink !tracking-widest !px-10 !py-4">
+                {ctaLabel}
               </Link>
-              <Link href="/our-making" className="link-underline text-white">Our story</Link>
             </div>
           </div>
         </div>
