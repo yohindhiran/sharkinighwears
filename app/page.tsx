@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowUpRight, MessageCircle, Sparkles, Feather, Truck, RotateCcw, ShieldCheck } from "lucide-react";
-import { getStorefrontProducts, getStorefrontCategories, getStorefrontPromotions, getStorefrontReviews } from "@/lib/storefront-data";
+import { getStorefrontProducts, getStorefrontCategories, getStorefrontReviews } from "@/lib/storefront-data";
 import { ProductCard } from "@/components/storefront/product-card";
 import { HeroCarousel } from "@/components/storefront/hero-carousel";
 import { BenefitsBar } from "@/components/storefront/benefits-bar";

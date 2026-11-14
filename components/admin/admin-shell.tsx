@@ -2,12 +2,13 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { Bell, CreditCard, Image, LayoutDashboard, LogOut, Menu, Package, Palette, Plug, Search, Settings, ShoppingCart, Star, Tag, Users, Warehouse, X } from "lucide-react";
+import { Bell, Building2, CreditCard, Image, LayoutDashboard, LogOut, Menu, Package, Palette, Plug, Search, Settings, ShoppingCart, Star, Tag, Users, Warehouse, X } from "lucide-react";
 import { useState } from "react";
 
 const navigation = [
   { label: "Dashboard", href: "/admin/dashboard", icon: LayoutDashboard },
   { label: "Orders", href: "/admin/orders", icon: ShoppingCart },
+  { label: "Wholesale", href: "/admin/wholesale", icon: Building2 },
   { label: "Payments", href: "/admin/payments", icon: CreditCard },
   { label: "Customers", href: "/admin/customers", icon: Users },
   { label: "Products", href: "/admin/products", icon: Package },
