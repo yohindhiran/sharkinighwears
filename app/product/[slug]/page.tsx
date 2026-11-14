@@ -7,7 +7,6 @@ import { notFound } from "next/navigation";
 import { ProductGallery } from "@/components/storefront/product-gallery";
 import { ProductPurchase } from "@/components/storefront/product-purchase";
 import { ReviewForm } from "@/components/storefront/review-form";
-import { db } from "@/lib/db";
 
 export async function generateMetadata({
   params,
@@ -33,17 +32,8 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
   const product = await getStorefrontProduct(resolvedParams.slug);
   if (!product) notFound();
 
-  // Retrieve product id for reviews
-  let productId = "";
-  try {
-    const rawProd = await db.product.findUnique({
-      where: { slug: resolvedParams.slug },
-      select: { id: true },
-    });
-    productId = rawProd?.id || "";
-  } catch (e) {
-    console.error("Could not fetch product ID for reviews:", e);
-  }
+  // Retrieve product id for reviews directly from fetched product
+  const productId = product.id || "";
 
   const discount = discountPercent(product.price, product.compareAt);
 

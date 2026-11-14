@@ -2,8 +2,30 @@ import { db } from "@/lib/db";
 import { requireAdmin } from "@/lib/admin-auth";
 import { InventoryTable } from "@/components/admin/inventory-table";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export default async function InventoryPage() {
   await requireAdmin();
-  const variants = await db.productVariant.findMany({ include: { product: { select: { name: true } } }, orderBy: { stock: "asc" } });
-  return <div><p className="text-xs font-semibold uppercase tracking-[.14em] text-[#71808c]">Operations</p><h1 className="mt-2 text-3xl font-semibold">Inventory</h1><p className="mt-2 text-sm text-[#71808c]">Stock quantities are read and updated against product variants in the database.</p><InventoryTable variants={variants} /></div>;
+  const variants = await db.productVariant.findMany({
+    select: {
+      id: true,
+      sku: true,
+      stock: true,
+      lowStockThreshold: true,
+      product: { select: { name: true } },
+    },
+    orderBy: [{ stock: "asc" }, { sku: "asc" }],
+  });
+
+  return (
+    <div>
+      <p className="text-xs font-semibold uppercase tracking-[.14em] text-[#71808c]">Operations</p>
+      <h1 className="mt-2 text-3xl font-semibold">Inventory</h1>
+      <p className="mt-2 text-sm text-[#71808c]">
+        Stock quantities are read and updated against product variants in the database.
+      </p>
+      <InventoryTable variants={variants} />
+    </div>
+  );
 }

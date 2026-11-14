@@ -31,16 +31,22 @@ export async function PATCH(
     const variant = await db.productVariant.update({
       where: { id: variantId },
       data: { stock },
+      select: {
+        id: true,
+        sku: true,
+        stock: true,
+        lowStockThreshold: true,
+      },
     });
 
-    // Upsert tracking record in Inventory table if it exists
-    await db.inventory
+    // Optional background sync to inventory audit table
+    db.inventory
       .upsert({
         where: { variantId },
         update: {},
         create: { variantId },
       })
-      .catch((e) => console.warn("Optional inventory table tracking sync:", e));
+      .catch(() => {});
 
     revalidateStorefront();
     return NextResponse.json(variant);
@@ -48,7 +54,7 @@ export async function PATCH(
     console.error("Inventory update error:", error);
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { error: "Invalid stock quantity. Please enter a positive whole number." },
+        { error: "Invalid stock quantity. Please enter a non-negative whole number." },
         { status: 400 }
       );
     }
