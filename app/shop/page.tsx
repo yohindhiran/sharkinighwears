@@ -13,7 +13,7 @@ export default async function ShopPage({ searchParams }: { searchParams: Promise
 
   try {
     const [productsData, categoriesData] = await Promise.all([
-      getStorefrontProducts(category, collection).catch(() => []),
+      getStorefrontProducts(category, collection, { limit: 24 }).catch(() => []),
       getStorefrontCategories().catch(() => []),
     ]);
     products = productsData;

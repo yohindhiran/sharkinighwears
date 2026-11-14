@@ -29,7 +29,7 @@ export default async function HomePage() {
 
   try {
     const results = await Promise.all([
-      getStorefrontProducts().catch(() => []),
+      getStorefrontProducts(undefined, undefined, { limit: 8 }).catch(() => []),
       getStorefrontCategories().catch(() => []),
       getStorefrontReviews(8).catch(() => []),
       getSiteContent<HomepageContent>("homepage", defaultHomepageContent).catch(() => defaultHomepageContent),
