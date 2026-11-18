@@ -3,19 +3,26 @@ import { z } from "zod";
 import { db } from "@/lib/db";
 import { getAdminSession } from "@/lib/admin-auth";
 import { revalidateStorefront } from "@/lib/revalidate-storefront";
+import { optionalImageUrlSchema } from "@/lib/validation";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 const productSchema = z.object({
-  name: z.string().trim().min(2).max(160),
-  slug: z.string().trim().min(2).max(160).regex(/^[a-z0-9-]+$/),
-  sku: z.string().trim().min(2).max(80),
-  description: z.string().trim().min(2).max(3000),
+  name: z.string().trim().min(2, "Product name must be at least 2 characters").max(160),
+  slug: z
+    .string()
+    .trim()
+    .min(2, "URL slug must be at least 2 characters")
+    .max(160)
+    .transform((v) => v.toLowerCase().replace(/[^a-z0-9-]+/g, "-").replace(/(^-|-$)+/g, ""))
+    .refine((v) => /^[a-z0-9-]+$/.test(v), "URL slug may only contain letters, numbers, and hyphens"),
+  sku: z.string().trim().min(2, "SKU must be at least 2 characters").max(80),
+  description: z.string().trim().min(2, "Description must be at least 2 characters").max(3000),
   price: z.coerce.number().int().nonnegative(),
   salePrice: z.coerce.number().int().nonnegative().nullable().optional(),
-  categoryId: z.string().min(1),
-  image: z.string().url().optional().or(z.literal("")),
+  categoryId: z.string().min(1, "Please select a category"),
+  image: optionalImageUrlSchema,
   sizes: z.array(z.string().trim().min(1)).default([]),
   colors: z.array(z.string().trim().min(1)).default([]),
   stock: z.coerce.number().int().nonnegative().default(0),
@@ -75,7 +82,13 @@ export async function POST(request: Request) {
     revalidateStorefront();
     return NextResponse.json(product, { status: 201 });
   } catch (error) {
-    if (error instanceof z.ZodError) return NextResponse.json({ error: "Please check the product fields." }, { status: 400 });
-    return NextResponse.json({ error: "Unable to create product." }, { status: 500 });
+    if (error instanceof z.ZodError) {
+      return NextResponse.json(
+        { error: error.errors[0]?.message || "Please check the product fields." },
+        { status: 400 }
+      );
+    }
+    console.error("Error creating product:", error);
+    return NextResponse.json({ error: "Unable to create product. Check if SKU or slug already exists." }, { status: 500 });
   }
 }

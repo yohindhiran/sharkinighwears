@@ -8,10 +8,6 @@ export const revalidate = 0;
 let dashboardCache: { data: Awaited<ReturnType<typeof fetchDashboardData>>; expiresAt: number } | null = null;
 const DASHBOARD_CACHE_TTL = 30 * 1000; // 30 seconds
 
-export function clearDashboardCache() {
-  dashboardCache = null;
-}
-
 export default async function AdminDashboard() {
   await requireAdmin();
   const data = await getDashboardData();
